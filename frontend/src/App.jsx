@@ -1,12 +1,20 @@
-import './App.css'
+import React from "react";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import Signup from "./components/Signup";
+import Login from "./components/Login";
+import Feed from "./components/Feed";
+import "./App.css";
 
 function App() {
-
   return (
-    <div className='text-3xl font-bold underline'>Badal Halder 2</div>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Feed />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
-
-
+export default App;

@@ -35,6 +35,121 @@ html {
    border-radius: 3px;
 }
 
+/* ==== Container ==== */
+.signup-container {
+   max-width: 420px;
+   margin: 60px auto;
+   padding: 30px 35px;
+   border-radius: 12px;
+   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+   background: linear-gradient(145deg, #ffffff, #f9fafc);
+   text-align: center;
+   transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.signup-container:hover {
+   transform: translateY(-3px);
+   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* ==== Heading ==== */
+.signup-container h2 {
+   margin-bottom: 25px;
+   color: #2d3748;
+   font-size: 1.8rem;
+   font-weight: 700;
+   letter-spacing: 0.5px;
+}
+
+/* ==== Form ==== */
+.signup-form {
+   display: flex;
+   flex-direction: column;
+   gap: 14px;
+}
+
+/* ==== Input fields ==== */
+.signup-form input,
+.signup-form select,
+.signup-form textarea {
+   padding: 12px;
+   border: 1px solid #cbd5e0;
+   border-radius: 6px;
+   font-size: 15px;
+   outline: none;
+   background-color: #fff;
+   transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.signup-form input:focus,
+.signup-form select:focus,
+.signup-form textarea:focus {
+   border-color: #3182ce;
+   box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.15);
+}
+
+/* ==== Button ==== */
+.signup-form button {
+   margin-top: 10px;
+   background-color: #3182ce;
+   color: white;
+   padding: 12px;
+   border: none;
+   border-radius: 6px;
+   font-size: 15px;
+   font-weight: 600;
+   letter-spacing: 0.3px;
+   cursor: pointer;
+   transition: background 0.25s ease, transform 0.1s ease;
+}
+
+.signup-form button:hover {
+   background-color: #2563eb;
+   transform: translateY(-1px);
+}
+
+/* ==== Message ==== */
+.message {
+   margin-top: 18px;
+   font-size: 15px;
+   font-weight: 500;
+   color: #2b6cb0;
+   text-align: center;
+   word-break: break-word;
+}
+
+/* ==== Scrollbar (for textarea) ==== */
+.signup-form textarea::-webkit-scrollbar {
+   width: 6px;
+}
+
+.signup-form textarea::-webkit-scrollbar-thumb {
+   background-color: #cbd5e0;
+   border-radius: 4px;
+}
+
+/* ==== Responsive ==== */
+@media (max-width: 480px) {
+   .signup-container {
+      max-width: 90%;
+      padding: 25px 20px;
+   }
+
+   .signup-container h2 {
+      font-size: 1.5rem;
+   }
+
+   .signup-form input,
+   .signup-form select,
+   .signup-form textarea {
+      font-size: 14px;
+   }
+
+   .signup-form button {
+      font-size: 14px;
+   }
+}
+
 @media (min-width: 1320px) and (max-width: 1900px) {}
 
 @media (min-width: 1024px) and (max-width: 1320px) {}
