@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 axios.defaults.withCredentials = true;
 
 const Signup = () => {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -54,6 +56,7 @@ const Signup = () => {
             skills: "",
             photoUrl: "",
          });
+         navigate("/login")
       } catch (error) {
          console.error("Signup failed:", error);
          setMessage(error.response?.data || "Signup failed! ❌");
