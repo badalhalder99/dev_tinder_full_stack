@@ -1,42 +1,50 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useUser } from "../context/customHook";
+import { useNavigate } from "react-router-dom";
 
 const Feed = () => {
-  const [users, setUsers] = useState([]);
-  const [page, setPage] = useState(1);
-  const [limit] = useState(5);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+   const [users, setUsers] = useState([]);
+   const { user } = useUser();
+   const navigate = useNavigate();
+   const [page, setPage] = useState(1);
+   const [limit] = useState(5);
+   const [loading, setLoading] = useState(false);
+   const [error, setError] = useState(null);
 
-  const fetchUsers = async (pageNum) => {
-    setLoading(true);
-    try {
+   const fetchUsers = async (pageNum) => {
+      setLoading(true);
+      try {
       const response = await axios.get(`http://localhost:3000/feed?page=${pageNum}&limit=${limit}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+         headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+         },
       });
       setUsers(response.data);
-    } catch (err) {
+      } catch (err) {
       setError(err.response?.data?.message || err.message);
-    } finally {
+      } finally {
       setLoading(false);
-    }
-  };
+      }
+   };
 
-  useEffect(() => {
-    fetchUsers(page);
-  }, [page]);
+   useEffect(() => {
+      if (!user) {
+         navigate("/login");
+         return;
+      }
+      fetchUsers(page);
+   }, [page]);
 
-  const handleNextPage = () => {
-    setPage((prev) => prev + 1);
-  };
+   const handleNextPage = () => {
+      setPage((prev) => prev + 1);
+   };
 
-  const handlePrevPage = () => {
-    if (page > 1) {
+   const handlePrevPage = () => {
+      if (page > 1) {
       setPage((prev) => prev - 1);
-    }
-  };
+      }
+   };
 
   return (
     <div className="container mx-auto p-4">
