@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useUser } from "../context/customHook";
 import { useNavigate } from "react-router-dom";
 
 axios.defaults.withCredentials = true;
 
 const Login = () => {
    const navigate = useNavigate()
-
+   const { setUser } = useUser(); // 👈 access setUser from context
    const [formData, setFormData] = useState({
-      emailId: "rahimakhatun23@gmail.com",
-      password: "Rahimakhatun23!@#",
+      emailId: "badalchandrahalder99@gmail.com",
+      password: "Badal1234!@",
    });
 
    const [message, setMessage] = useState("");
@@ -29,6 +30,8 @@ const Login = () => {
          { withCredentials: true }
       );
 
+      setUser(response.data.user);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
       setMessage(response.data || "Login successful! 🎉");
 
       // ✅ Optional: redirect after login success

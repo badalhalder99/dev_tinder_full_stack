@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 axios.defaults.withCredentials = true;
 
 const Signup = () => {
-  const navigate = useNavigate()
+   const navigate = useNavigate()
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -41,7 +41,7 @@ const Signup = () => {
             { ...formData, skills: formattedSkills },
             { withCredentials: true }
          );
-
+         
          setMessage(response.data || "Signup successful! 🎉");
 
          // Reset form fields

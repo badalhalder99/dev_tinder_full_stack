@@ -48,30 +48,56 @@ authRouter.post("/signup", async (req, res) => {
 
 //Login API - Login new users:
 authRouter.post("/login", async (req, res) => {
-   try {
-      const { emailId, password } = req.body
+  try {
+    const { emailId, password } = req.body;
 
-      // Check if user already exists
-      const existingUser = await User.findOne({ emailId: emailId.toLowerCase() });
+    // Check if user exists
+    const existingUser = await User.findOne({ emailId: emailId.toLowerCase() });
 
-      if (!existingUser) {
-         return res.status(404).send("User not found!");
-      }
+    if (!existingUser) {
+      return res.status(404).send("User not found!");
+    }
 
-      const isPasswordValid = await bcrypt.compare(password, existingUser.password)
+    // Check password
+    const isPasswordValid = await bcrypt.compare(password, existingUser.password);
 
-      if (isPasswordValid) {
-         const token = await existingUser.getJWT()
-         res.cookie("token", token)
-         res.send("User logged in successfully!")
-      } else {
-         throw new Error ("Password is not correct!")
-      }
+    if (!isPasswordValid) {
+      return res.status(401).send("Invalid password!");
+    }
 
-   } catch (err) {
-      res.status(500).send(`Error saving the user: ${err.message}`);
-   }
-})
+    // Generate JWT token
+    const token = await existingUser.getJWT();
+
+    // Set cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
+    });
+
+   // ✅ Send user data back to frontend
+   res.status(200).json({
+      message: "User logged in successfully!",
+      user: {
+         _id: existingUser._id,
+         firstName: existingUser.firstName,
+         lastName: existingUser.lastName,
+         emailId: existingUser.emailId,
+         photoUrl: existingUser.photoUrl,
+         skills: existingUser.skills,
+         about: existingUser.about,
+         age: existingUser.age,
+         gender: existingUser.gender,
+      },
+      token,
+   });
+     
+   console.log(user)
+  } catch (err) {
+    res.status(500).send(`Error logging in: ${err.message}`);
+  }
+});
+
 
 //Logout API - Logout users:
 authRouter.post("/logout", async (req, res) => {

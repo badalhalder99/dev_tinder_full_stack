@@ -41,8 +41,8 @@ userRouter.get("/user/connections", userAuth,  async (req, res) => {
             { fromUserId: loggedInUser._id, status: "accepted" },
          ]
       })
-      .populate("fromUserId", ["firstName", "lastName", "photoUrl"])
-      .populate("toUserId", ["firstName", "lastName", "photoUrl"])
+      .populate("fromUserId", ["firstName", "lastName", "photoUrl","about", "age", "gender"])
+      .populate("toUserId", ["firstName", "lastName", "photoUrl","about", "age", "gender"])
 
       if (!connectionRequests) {
          return res.status(404).json({

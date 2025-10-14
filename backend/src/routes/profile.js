@@ -9,10 +9,22 @@ const { validateProfileEditData } = require("../utils/validate")
 //Profile view API:
 profileRouter.get("/profile/view", userAuth, async (req, res) => {
    try {
+      const loggedInUser = req.user;
 
-      const user = req.user
-
-      res.send(user)
+      res.json({
+         code: 200,
+         message: "Profile fetched successfully",
+         data: {
+            _id: loggedInUser._id,
+            firstName: loggedInUser.firstName,
+            lastName: loggedInUser.lastName,
+            age: loggedInUser.age,
+            gender: loggedInUser.gender,
+            about: loggedInUser.about,
+            skills: loggedInUser.skills,
+            photoUrl: loggedInUser.photoUrl,
+         },
+      });
    } catch (err) {
       res.status(500).send(`Error saving the user: ${err.message}`);
    }
