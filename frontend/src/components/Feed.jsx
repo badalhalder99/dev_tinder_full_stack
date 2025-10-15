@@ -4,53 +4,77 @@ import { useUser } from "../context/customHook";
 import { useNavigate } from "react-router-dom";
 
 const Feed = () => {
-   const [users, setUsers] = useState([]);
-   const { user } = useUser();
-   const navigate = useNavigate();
-   const [page, setPage] = useState(1);
-   const [limit] = useState(5);
-   const [loading, setLoading] = useState(false);
-   const [error, setError] = useState(null);
+  const [users, setUsers] = useState([]);
+  const { user } = useUser();
+  const navigate = useNavigate();
+  const [page, setPage] = useState(1);
+  const [limit] = useState(6);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-   const fetchUsers = async (pageNum) => {
-      setLoading(true);
-      try {
+  const fetchUsers = async (pageNum) => {
+    setLoading(true);
+    try {
       const response = await axios.get(`http://localhost:3000/feed?page=${pageNum}&limit=${limit}`, {
-         headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-         },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+          withCredentials: true, // Include cookies for userAuth middleware
+        },
       });
       setUsers(response.data);
-      } catch (err) {
-      setError(err.response?.data?.message || err.message);
-      } finally {
+      setError(null); // Clear any previous errors
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to fetch users");
+    } finally {
       setLoading(false);
-      }
-   };
+    }
+  };
 
-   useEffect(() => {
-      if (!user) {
-         navigate("/login");
-         return;
-      }
-      fetchUsers(page);
-   }, [page]);
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    fetchUsers(page);
+  }, [user, navigate, page]);
 
-   const handleNextPage = () => {
-      setPage((prev) => prev + 1);
-   };
+  const handleRequest = async (status, toUserId) => {
+    try {
+      await axios.post(
+        `http://localhost:3000/request/send/${status}/${toUserId}`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+          withCredentials: true,
+        }
+      );
+      // Remove user from feed after successful request
+      setUsers(users.filter((u) => u._id !== toUserId));
+      setError(null); // Clear any previous errors
+    } catch (err) {
+      setError(err.response?.data?.message || `Failed to send ${status} request`);
+    }
+  };
 
-   const handlePrevPage = () => {
-      if (page > 1) {
+  const handleNextPage = () => {
+    setPage((prev) => prev + 1);
+  };
+
+  const handlePrevPage = () => {
+    if (page > 1) {
       setPage((prev) => prev - 1);
-      }
-   };
+    }
+  };
 
   return (
     <div className="container mx-auto p-4">
       <h2 className="text-2xl font-bold mb-4 text-center">Discover People</h2>
 
-      {loading && <div className="text-center">Loading...</div>}
+      {loading && <div className="text-center text-gray-600">Loading...</div>}
       {error && <div className="text-red-500 text-center">{error}</div>}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -60,17 +84,17 @@ const Feed = () => {
             className="border rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow bg-white"
           >
             <img
-              src={user.photoUrl}
+              src={user.photoUrl || "https://via.placeholder.com/100"}
               alt={`${user.firstName} ${user.lastName}`}
               className="w-24 h-24 rounded-full mx-auto mb-2 object-cover"
             />
             <h3 className="text-lg font-semibold text-center">
               {user.firstName} {user.lastName}
             </h3>
-            <p className="text-gray-600 text-center">Age: {user.age}</p>
-            <p className="text-gray-600 text-center">Gender: {user.gender}</p>
-            <p className="text-gray-700 mt-2">{user.about}</p>
-            {user.skills.length > 0 && (
+            <p className="text-gray-600 text-center">Age: {user.age || "N/A"}</p>
+            <p className="text-gray-600 text-center">Gender: {user.gender || "N/A"}</p>
+            <p className="text-gray-700 mt-2">{user.about || "No bio available"}</p>
+            {user.skills?.length > 0 && (
               <div className="mt-2">
                 <p className="font-medium">Skills:</p>
                 <div className="flex flex-wrap gap-2 mt-1">
@@ -85,16 +109,19 @@ const Feed = () => {
                 </div>
               </div>
             )}
-            <div className="flex gap-5">
-                 <button className="mt-4 w-full bg-red-500 text-white py-2 rounded hover:bg-red-600 transition-colors"
-            >
-              Ignore
-                 </button>
-            <button
-              className="mt-4 w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition-colors"
-            >
-              Interested
-            </button>
+            <div className="flex gap-4 mt-4">
+              <button
+                className="flex-1 bg-red-500 text-white py-2 rounded hover:bg-red-600 transition-colors"
+                onClick={() => handleRequest("ignored", user._id)}
+              >
+                Ignore
+              </button>
+              <button
+                className="flex-1 bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition-colors"
+                onClick={() => handleRequest("interested", user._id)}
+              >
+                Interested
+              </button>
             </div>
           </div>
         ))}

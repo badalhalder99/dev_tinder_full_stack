@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useUser } from "../context/customHook";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 axios.defaults.withCredentials = true;
 
@@ -69,6 +69,7 @@ const Login = () => {
          />
 
          <button type="submit">Login</button>
+         <h5 className="text-[14px] text-black text-center">Not have an Account? <Link to="/signup" className="underline hover:no-underline">sign up</Link></h5>
       </form>
 
       {message && <p className="message">{message}</p>}

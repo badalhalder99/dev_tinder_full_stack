@@ -39,8 +39,22 @@ authRouter.post("/signup", async (req, res) => {
       //creating a new instance of the user model
       const user = new User(newUser)
 
-      await user.save()
-      res.send("User added successfully!")
+      const savedUser = await user.save()
+      // Generate JWT token
+      const token = await savedUser.getJWT();
+
+      // Set cookie
+      res.cookie("token", token, {
+         httpOnly: true,
+         sameSite: "strict",
+         expires: new Date(Date.now() + 8 * 3600000)
+      });
+
+      res.json({
+         status: 200,
+         message: "User added successfully!",
+         data: savedUser
+      })
    } catch (err) {
       res.status(500).send(`Error saving the user: ${err.message}`);
    }
@@ -73,6 +87,7 @@ authRouter.post("/login", async (req, res) => {
       httpOnly: true,
       sameSite: "strict",
       secure: process.env.NODE_ENV === "production",
+      expires: new Date(Date.now() + 8 * 3600000)
     });
 
    // ✅ Send user data back to frontend
@@ -91,7 +106,7 @@ authRouter.post("/login", async (req, res) => {
       },
       token,
    });
-     
+
    console.log(user)
   } catch (err) {
     res.status(500).send(`Error logging in: ${err.message}`);

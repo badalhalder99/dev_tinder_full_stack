@@ -5,7 +5,6 @@ import axios from "axios";
 
 const Navbar = () => {
    const { user, setUser } = useUser();
-   console.log(user)
    const navigate = useNavigate();
    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
